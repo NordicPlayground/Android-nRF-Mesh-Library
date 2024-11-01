@@ -48,7 +48,10 @@ public class SensorSettingGet extends ApplicationMessage {
     void assembleMessageParameters() {
         mAid = SecureUtils.calculateK4(mAppKey.getKey());
         if (propertyId != null)
-            mParameters = ByteBuffer.allocate(2).order(LITTLE_ENDIAN).putShort(propertyId.getPropertyId()).array();
+            mParameters = ByteBuffer.allocate(4).order(LITTLE_ENDIAN)
+                    .putShort(propertyId.getPropertyId())
+                    .putShort(sensorSettingPropertyId.getPropertyId())
+                    .array();
     }
 
     /**
