@@ -33,6 +33,7 @@ public class SensorSeriesGet extends ApplicationMessage {
                            @NonNull final DeviceProperty property) {
         super(appKey);
         this.property = property;
+        assembleMessageParameters();
     }
 
     /**
@@ -62,7 +63,7 @@ public class SensorSeriesGet extends ApplicationMessage {
     @Override
     void assembleMessageParameters() {
         mAid = SecureUtils.calculateK4(mAppKey.getKey());
-        if (rawValueX1 != null) {
+        if (rawValueX1 == null) {
             mParameters = ByteBuffer.allocate(2).order(LITTLE_ENDIAN)
                     .putShort(property.getPropertyId())
                     .array();

@@ -78,7 +78,7 @@ public class MarshalledPropertyId implements Parcelable {
     public void writeToParcel(final Parcel dest, final int flags) {
         dest.writeInt(sensorFormat.ordinal());
         dest.writeInt(length);
-        dest.writeInt(propertyId.ordinal());
+        dest.writeInt(propertyId.getPropertyId());
     }
 
     @Override
