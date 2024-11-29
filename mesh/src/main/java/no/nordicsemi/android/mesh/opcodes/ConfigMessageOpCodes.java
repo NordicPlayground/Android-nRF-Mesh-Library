@@ -27,7 +27,7 @@ public class ConfigMessageOpCodes {
     /**
      * Opcode for the "ApplicationKey Add" message.
      */
-    public static final byte CONFIG_APPKEY_ADD = 0x00;
+    public static final int CONFIG_APPKEY_ADD = 0x00;
 
     /**
      * Opcode for the "ApplicationKey Update" message.
@@ -37,12 +37,12 @@ public class ConfigMessageOpCodes {
     /**
      * Opcode for the "Composition Data Status" message.
      */
-    public static final byte CONFIG_COMPOSITION_DATA_STATUS = 0x02;
+    public static final int CONFIG_COMPOSITION_DATA_STATUS = 0x02;
 
     /**
      * Opcode for the "Config Model Publication Set" message.
      */
-    public static final byte CONFIG_MODEL_PUBLICATION_SET = 0x03;
+    public static final int CONFIG_MODEL_PUBLICATION_SET = 0x03;
 
     /**
      * Opcode for the "Heartbeat Publication Status" message.

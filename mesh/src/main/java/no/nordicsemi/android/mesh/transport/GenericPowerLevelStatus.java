@@ -24,51 +24,48 @@ package no.nordicsemi.android.mesh.transport;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import androidx.annotation.NonNull;
+import no.nordicsemi.android.mesh.logger.MeshLogger;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import no.nordicsemi.android.mesh.logger.MeshLogger;
+import androidx.annotation.NonNull;
 import no.nordicsemi.android.mesh.opcodes.ApplicationMessageOpCodes;
 import no.nordicsemi.android.mesh.utils.MeshAddress;
 import no.nordicsemi.android.mesh.utils.MeshParserUtils;
 
 /**
- * To be used as a wrapper class to create light ctl status message.
+ * To be used as a wrapper class to create generic power level status message.
  */
 @SuppressWarnings({"WeakerAccess"})
-public final class LightCtlStatus extends ApplicationStatusMessage implements Parcelable {
+public final class GenericPowerLevelStatus extends ApplicationStatusMessage implements Parcelable {
 
-    private static final String TAG = LightCtlStatus.class.getSimpleName();
-    private static final int LIGHT_CTL_STATUS_MANDATORY_LENGTH = 4;
-    private static final int OP_CODE = ApplicationMessageOpCodes.LIGHT_CTL_STATUS;
-    private static final Creator<LightCtlStatus> CREATOR = new Creator<LightCtlStatus>() {
-        @Override
-        public LightCtlStatus createFromParcel(Parcel in) {
-            final AccessMessage message = in.readParcelable(AccessMessage.class.getClassLoader());
-            return new LightCtlStatus(message);
-        }
-
-        @Override
-        public LightCtlStatus[] newArray(int size) {
-            return new LightCtlStatus[size];
-        }
-    };
-    private int mPresentCtlLightness;
-    private int mPresentCtlTemperature;
-    private Integer mTargetCtlLightness;
-    private Integer mTargetCtlTemperature;
+    private static final String TAG = GenericPowerLevelStatus.class.getSimpleName();
+    private static final int GENERIC_POWER_LEVEL_STATUS_MANDATORY_LENGTH = 2;
+    private static final int OP_CODE = ApplicationMessageOpCodes.GENERIC_POWER_LEVEL_STATUS;
+    private int mPresentPowerLevel;
+    private Integer mTargetPowerLevel;
     private int mTransitionSteps;
     private int mTransitionResolution;
 
+    private static final Creator<GenericPowerLevelStatus> CREATOR = new Creator<GenericPowerLevelStatus>() {
+        @Override
+        public GenericPowerLevelStatus createFromParcel(Parcel in) {
+            final AccessMessage message = in.readParcelable(AccessMessage.class.getClassLoader());
+            return new GenericPowerLevelStatus(message);
+        }
+
+        @Override
+        public GenericPowerLevelStatus[] newArray(int size) {
+            return new GenericPowerLevelStatus[size];
+        }
+    };
+
     /**
-     * Constructs LightCtlStatus message
-     *
+     * Constructs GenericPowerLevelStatus message
      * @param message access message
      */
-    public LightCtlStatus(@NonNull final AccessMessage message) {
+    public GenericPowerLevelStatus(@NonNull final AccessMessage message) {
         super(message);
         this.mMessage = message;
         this.mParameters = message.getParameters();
@@ -77,20 +74,16 @@ public final class LightCtlStatus extends ApplicationStatusMessage implements Pa
 
     @Override
     void parseStatusParameters() {
-        MeshLogger.verbose(TAG, "Received light ctl status from: " + MeshAddress.formatAddress(mMessage.getSrc(), true));
+        MeshLogger.verbose(TAG, "Received generic power level status from: " + MeshAddress.formatAddress(mMessage.getSrc(), true));
         final ByteBuffer buffer = ByteBuffer.wrap(mParameters).order(ByteOrder.LITTLE_ENDIAN);
-        mPresentCtlLightness = buffer.getShort() & 0xFFFF;
-        mPresentCtlTemperature = buffer.getShort() & 0xFFFF;
-        MeshLogger.verbose(TAG, "Present lightness: " + mPresentCtlLightness);
-        MeshLogger.verbose(TAG, "Present temperature: " + mPresentCtlTemperature);
-        if (buffer.limit() > LIGHT_CTL_STATUS_MANDATORY_LENGTH) {
-            mTargetCtlLightness = buffer.getShort() & 0xFFFF;
-            mTargetCtlTemperature = buffer.getShort() & 0xFFFF;
+        mPresentPowerLevel = (int) (buffer.getShort());
+        MeshLogger.verbose(TAG, "Present power level: " + mPresentPowerLevel);
+        if (buffer.limit() > GENERIC_POWER_LEVEL_STATUS_MANDATORY_LENGTH) {
+            mTargetPowerLevel = (int) (buffer.getShort());
             final int remainingTime = buffer.get() & 0xFF;
             mTransitionSteps = (remainingTime & 0x3F);
             mTransitionResolution = (remainingTime >> 6);
-            MeshLogger.verbose(TAG, "Target lightness: " + mTargetCtlLightness);
-            MeshLogger.verbose(TAG, "Target temperature: " + mTargetCtlTemperature);
+            MeshLogger.verbose(TAG, "Target power level: " + mTargetPowerLevel);
             MeshLogger.verbose(TAG, "Remaining time, transition number of steps: " + mTransitionSteps);
             MeshLogger.verbose(TAG, "Remaining time, transition number of step resolution: " + mTransitionResolution);
             MeshLogger.verbose(TAG, "Remaining time: " + MeshParserUtils.getRemainingTime(remainingTime));
@@ -107,8 +100,8 @@ public final class LightCtlStatus extends ApplicationStatusMessage implements Pa
      *
      * @return present level
      */
-    public final int getPresentLightness() {
-        return mPresentCtlLightness;
+    public final int getPresentLevel() {
+        return mPresentPowerLevel;
     }
 
     /**
@@ -116,26 +109,8 @@ public final class LightCtlStatus extends ApplicationStatusMessage implements Pa
      *
      * @return target level
      */
-    public final Integer getTargetLightness() {
-        return mTargetCtlLightness;
-    }
-
-    /**
-     * Returns the present level of the GenericOnOffModel
-     *
-     * @return present level
-     */
-    public final int getPresentTemperature() {
-        return mPresentCtlTemperature;
-    }
-
-    /**
-     * Returns the target level of the GenericOnOffModel
-     *
-     * @return target level
-     */
-    public final Integer getTargetTemperature() {
-        return mTargetCtlTemperature;
+    public final Integer getTargetLevel() {
+        return mTargetPowerLevel;
     }
 
     /**

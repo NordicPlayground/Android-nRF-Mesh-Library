@@ -74,6 +74,14 @@ public interface MeshStatusCallbacks {
     void onBlockAcknowledgementReceived(final int src, @NonNull final ControlMessage message);
 
     /**
+     * Notifies if a heartbeat message was received
+     *
+     * @param src     Source address from which the heartbeat message was received
+     * @param message Control message containing the heartbeat message
+     */
+    void onHeartbeatMessageReceived(final int src, @NonNull final ControlMessage message);
+
+    /**
      * Callback to notify the mesh message has been processed to be sent to the bearer
      *
      * <p>
@@ -97,8 +105,8 @@ public interface MeshStatusCallbacks {
     /**
      * Callback to notify if the decryption failed of a received mesh message
      *
-     * @param meshLayer     Mesh layer name
-     * @param errorMessage  Error message
+     * @param meshLayer    Mesh layer name
+     * @param errorMessage Error message
      */
     void onMessageDecryptionFailed(final String meshLayer, final String errorMessage);
 }

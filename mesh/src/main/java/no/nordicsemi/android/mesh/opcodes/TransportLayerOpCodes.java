@@ -27,4 +27,9 @@ public class TransportLayerOpCodes {
      * Lower transport layer reserved opcode for block acks.
      */
     public static final int SAR_ACK_OPCODE = 0x00;
+
+    /**
+     * Lower transport layer reserved opcode for heartbeats.
+     */
+    public static final int HEARTBEAT_OPCODE = 0x0A;
 }

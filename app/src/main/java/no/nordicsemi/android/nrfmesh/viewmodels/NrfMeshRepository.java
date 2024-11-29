@@ -752,6 +752,11 @@ public class NrfMeshRepository implements MeshProvisioningStatusCallbacks, MeshS
     }
 
     @Override
+    public void onHeartbeatMessageReceived(int src, @NonNull ControlMessage message) {
+
+    }
+
+    @Override
     public void onMeshMessageProcessed(final int dst, @NonNull final MeshMessage meshMessage) {
         final ProvisionedMeshNode node = mMeshNetwork.getNode(dst);
         if (node != null) {

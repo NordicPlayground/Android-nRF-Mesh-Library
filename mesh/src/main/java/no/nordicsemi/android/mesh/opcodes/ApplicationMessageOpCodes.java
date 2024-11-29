@@ -60,6 +60,26 @@ public class ApplicationMessageOpCodes {
     public static final int GENERIC_DELTA_SET = 0x8209;
 
     /**
+     * Opcode for the "Generic Power Level Get" message.
+     */
+    public static final int GENERIC_POWER_LEVEL_GET = 0x8215;
+
+    /**
+     * Opcode for the "Generic Power Level Set" message.
+     */
+    public static final int GENERIC_POWER_LEVEL_SET = 0x8216;
+
+    /**
+     * Opcode for the "Generic Power Level Set Unacknowledged" message.
+     */
+    public static final int GENERIC_POWER_LEVEL_SET_UNACKNOWLEDGED = 0x8217;
+
+    /**
+     * Opcode for the "Generic Power Level Status" message.
+     */
+    public static final int GENERIC_POWER_LEVEL_STATUS = 0x8218;
+
+    /**
      * Opcode for the "Generic Location Global Get" message
      */
     public static final int GENERIC_LOCATION_GLOBAL_GET = 0x8225;
@@ -138,6 +158,26 @@ public class ApplicationMessageOpCodes {
      * Opcode for the "Light Ctl Status" message
      */
     public static final int LIGHT_CTL_STATUS = 0x8260;
+
+    /**
+     * Opcode for the "Light Ctl Temperature Range Get" message
+     */
+    public static final int LIGHT_CTL_TEMPERATURE_RANGE_GET = 0x8262;
+
+    /**
+     * Opcode for the "Light Ctl Temperature Range Status" message
+     */
+    public static final int LIGHT_CTL_TEMPERATURE_RANGE_STATUS = 0x8263;
+
+    /**
+     * Opcode for the "Light Ctl Temperature Range Set" message
+     */
+    public static final int LIGHT_CTL_TEMPERATURE_RANGE_SET = 0x826B;
+
+    /**
+     * Opcode for the "Light Ctl Temperature Range Set Unacknowledged" message
+     */
+    public static final int LIGHT_CTL_TEMPERATURE_RANGE_SET_UNACKNOWLEDGED = 0x826C;
 
     /**
      * Opcode for the "Light Hsl Get" message

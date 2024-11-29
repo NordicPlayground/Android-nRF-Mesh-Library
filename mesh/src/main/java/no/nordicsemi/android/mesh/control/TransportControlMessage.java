@@ -31,7 +31,8 @@ public abstract class TransportControlMessage {
     public abstract TransportControlMessageState getState();
 
     public enum TransportControlMessageState {
-        LOWER_TRANSPORT_BLOCK_ACKNOWLEDGEMENT(TransportLayerOpCodes.SAR_ACK_OPCODE);
+        LOWER_TRANSPORT_BLOCK_ACKNOWLEDGEMENT(TransportLayerOpCodes.SAR_ACK_OPCODE),
+        LOWER_TRANSPORT_HEARTBEAT_MESSAGE(TransportLayerOpCodes.HEARTBEAT_OPCODE);
 
         private int state;
 

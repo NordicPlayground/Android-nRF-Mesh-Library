@@ -22,16 +22,18 @@
 
 package no.nordicsemi.android.mesh.transport;
 
-import no.nordicsemi.android.mesh.logger.MeshLogger;
 import android.util.SparseArray;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 import no.nordicsemi.android.mesh.MeshManagerApi;
 import no.nordicsemi.android.mesh.control.BlockAcknowledgementMessage;
+import no.nordicsemi.android.mesh.control.HeartbeatMessage;
+import no.nordicsemi.android.mesh.logger.MeshLogger;
 import no.nordicsemi.android.mesh.opcodes.TransportLayerOpCodes;
 import no.nordicsemi.android.mesh.utils.ExtendedInvalidCipherTextException;
 import no.nordicsemi.android.mesh.utils.MeshAddress;
@@ -63,9 +65,6 @@ abstract class LowerTransportLayer extends UpperTransportLayer {
     private boolean mSegmentedControlAcknowledgementTimerStarted;
     private Integer mSegmentedControlBlockAck;
     private boolean mIncompleteTimerStarted;
-    private boolean mBlockAckSent;
-    private long mDuration;
-
     /**
      * Runnable for incomplete timer
      */
@@ -77,6 +76,8 @@ abstract class LowerTransportLayer extends UpperTransportLayer {
             mIncompleteTimerStarted = false;
         }
     };
+    private boolean mBlockAckSent;
+    private long mDuration;
 
     /**
      * Sets the lower transport layer callbacks
@@ -792,6 +793,10 @@ abstract class LowerTransportLayer extends UpperTransportLayer {
             controlMessage.setTransportControlMessage(acknowledgement);
         }
 
+        if (opCode == TransportLayerOpCodes.HEARTBEAT_OPCODE) {
+            final HeartbeatMessage heartbeatMessage = new HeartbeatMessage(controlMessage);
+            controlMessage.setTransportControlMessage(heartbeatMessage);
+        }
     }
 
     /**
