@@ -22,15 +22,10 @@
 
 package no.nordicsemi.android.mesh.transport;
 
+import static androidx.room.ForeignKey.CASCADE;
+
 import android.annotation.SuppressLint;
 import android.os.Parcel;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
@@ -39,6 +34,15 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.Index;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import no.nordicsemi.android.mesh.ApplicationKey;
 import no.nordicsemi.android.mesh.Features;
 import no.nordicsemi.android.mesh.MeshNetwork;
@@ -53,8 +57,6 @@ import no.nordicsemi.android.mesh.utils.NetworkTransmitSettings;
 import no.nordicsemi.android.mesh.utils.RelaySettings;
 import no.nordicsemi.android.mesh.utils.SecureUtils;
 import no.nordicsemi.android.mesh.utils.SparseIntArrayParcelable;
-
-import static androidx.room.ForeignKey.CASCADE;
 
 @SuppressWarnings({"WeakerAccess"})
 @Entity(tableName = "nodes",
@@ -100,7 +102,7 @@ public final class ProvisionedMeshNode extends ProvisionedBaseMeshNode {
         ttl = node.getTtl();
         mTimeStampInMillis = node.getTimeStamp();
         // Here we add some dummy elements with empty models to occupy the addresses in use.
-        for(int i = 0; i < node.getProvisioningCapabilities().getNumberOfElements(); i++){
+        for (int i = 0; i < node.getProvisioningCapabilities().getNumberOfElements(); i++) {
             mElements.put(unicastAddress + i, new Element(unicastAddress + i, 0, new HashMap<>()));
         }
         security = node.isSecure() ? HIGH : LOW;
@@ -506,7 +508,34 @@ public final class ProvisionedMeshNode extends ProvisionedBaseMeshNode {
                 lowPowerFeatureSupported ? Features.DISABLED : Features.UNSUPPORTED,
                 proxyFeatureSupported ? Features.DISABLED : Features.UNSUPPORTED,
                 relayFeatureSupported ? Features.DISABLED : Features.UNSUPPORTED);
-        mElements.putAll(configCompositionDataStatus.getElements());
+
+        LinkedHashMap<Integer, Element> modifiableNewElements = new LinkedHashMap<>(configCompositionDataStatus.getElements());
+
+        // For each old element
+        for (Map.Entry<Integer, Element> newElementEntry : configCompositionDataStatus.getElements().entrySet()) {
+            final Element newElement = newElementEntry.getValue();
+            // Fetch same element in new composition data
+            final Element oldElement = mElements.get(newElementEntry.getKey());
+
+            LinkedHashMap<Integer, MeshModel> updatedElementModels = new LinkedHashMap<>(newElement.getMeshModels());
+
+            // Old element existed previously, may have same mesh models
+            if (oldElement != null) {
+                // For each model in that element
+                for (Map.Entry<Integer, MeshModel> modelEntry : newElement.getMeshModels().entrySet()) {
+
+                    // Override new element models with old to ensure we keep mesh model info
+                    if (oldElement.getMeshModels().containsKey(modelEntry.getKey())) {
+                        updatedElementModels.put(modelEntry.getKey(), oldElement.meshModels.get(modelEntry.getKey()));
+                    }
+                }
+
+                Element newUpdatedElement = new Element(newElement.elementAddress, newElement.locationDescriptor, updatedElementModels, newElement.name);
+
+                modifiableNewElements.put(newElementEntry.getKey(), newUpdatedElement);
+            }
+        }
+        mElements.putAll(modifiableNewElements);
     }
 
     /**
