@@ -105,7 +105,7 @@ public final class SensorDescriptorStatus extends ApplicationStatusMessage imple
         }
     }
 
-    protected DescriptorStatusResult getResult() {
+    public DescriptorStatusResult getResult() {
         return result;
     }
 
